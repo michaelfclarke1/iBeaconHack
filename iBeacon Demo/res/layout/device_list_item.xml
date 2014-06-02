@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <TextView
+        android:id="@+id/deviceUUID"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:text="{UUID Unknown}"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <TextView
+        android:id="@+id/majorLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/deviceUUID"
+        android:text="Major:"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <TextView
+        android:id="@+id/majorValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/majorLabel"
+        android:layout_alignBottom="@+id/majorLabel"
+        android:layout_toRightOf="@+id/majorLabel"
+        android:text="Unknown"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <TextView
+        android:id="@+id/minorLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/majorValue"
+        android:layout_alignBottom="@+id/majorValue"
+        android:layout_marginLeft="20dp"
+        android:layout_toRightOf="@+id/majorValue"
+        android:text="Minor:"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <TextView
+        android:id="@+id/minorValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/deviceUUID"
+        android:layout_toRightOf="@+id/minorLabel"
+        android:text="Unknown"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <TextView
+        android:id="@+id/distanceLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/minorValue"
+        android:layout_alignBottom="@+id/minorValue"
+        android:layout_marginLeft="20dp"
+        android:layout_toRightOf="@+id/minorValue"
+        android:text="Distance:"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <TextView
+        android:id="@+id/distanceValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/distanceLabel"
+        android:layout_alignBottom="@+id/distanceLabel"
+        android:layout_toRightOf="@+id/distanceLabel"
+        android:text="Unknown"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+</RelativeLayout>
