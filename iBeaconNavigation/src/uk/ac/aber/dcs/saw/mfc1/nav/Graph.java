@@ -27,7 +27,6 @@ public class Graph {
 		try {
 			vertexIds = sdh.getStringArrayWithQuery("vertex", "id", null, null);
 		} catch (DataNotFoundException e) {
-			Log.e("ERROR", "No vertexes!");
 			e.printStackTrace();
 		}
 		
@@ -38,32 +37,28 @@ public class Graph {
 				try {
 					
 					String[] id = new String[] { vertexIds.get(i)  };
-					String uuid = "";
-					String name;
-					String major;
-					String minor;
-					
-					uuid = sdh.getStringWithQuery("vertex", "uuid", "id=?", id);
-					major = sdh.getStringWithQuery("vertex", "major", "id=?", id);
-					minor = sdh.getStringWithQuery("vertex", "minor", "id=?", id);
-					name = sdh.getStringWithQuery("vertex", "name", "id=?", id);
+
+					String uuid = sdh.getStringWithQuery("vertex", "uuid", "id=?", id);
+					String major = sdh.getStringWithQuery("vertex", "major", "id=?", id);
+					String minor = sdh.getStringWithQuery("vertex", "minor", "id=?", id);
+					String name = sdh.getStringWithQuery("vertex", "name", "id=?", id);
 
 					Vertex v = new Vertex(uuid, Integer.valueOf(major), Integer.valueOf(minor), name);
 					graph.put(v.getHash(), v);
 					allVertex.add(v);
 					useful.put(vertexIds.get(i), v);
 					
-					Log.e("APP", "Added vertex.");
-					
 				} catch (DataNotFoundException e) {
-					Log.e("ARGH!", "Oh dear!");
+					e.printStackTrace();
 				}
 				
 			}
 			
 		}
 		
-		/* Now get all the edges for the graph. */
+		/* Now get all the edges for the graph, and join 
+		 * the vertexs together. 
+		 */
 		try {
 			vertexIds = sdh.getStringArrayWithQuery("edge", "id", null, null );
 		} catch (DataNotFoundException e) {
@@ -77,46 +72,38 @@ public class Graph {
 				try {
 					
 					String id[] = new String[] { vertexIds.get(i) };
-					String from;
-					String to;
-					Integer weight;
-					String direction;
-					
-					from = sdh.getStringWithQuery("edge", "from_id", "id=?", id);
-					to = sdh.getStringWithQuery("edge", "to_id", "id=?", id);
-					weight = sdh.getIntegerWithQuery("edge", "weight", "id=?", id);
-					direction = sdh.getStringWithQuery("edge", "direction", "id=?", id);
+
+					String from = sdh.getStringWithQuery("edge", "from_id", "id=?", id);
+					String to = sdh.getStringWithQuery("edge", "to_id", "id=?", id);
+					Integer weight = sdh.getIntegerWithQuery("edge", "weight", "id=?", id);
+					String direction = sdh.getStringWithQuery("edge", "direction", "id=?", id);
 					
 					Vertex fromV = useful.get(from);
 					Vertex toV = useful.get(to);
 					
 					FriendlyNav dir;
 					
-					if (direction.equalsIgnoreCase("downstairs")) dir = FriendlyNav.DOWNSTAIRS;
-					if (direction.equalsIgnoreCase("upstairs")) dir = FriendlyNav.UPSTAIRS;
-					
-					     
-					     if (direction.equalsIgnoreCase("NNE")) dir = FriendlyNav.NNE;
-					else if (direction.equalsIgnoreCase("NE"))  dir = FriendlyNav.NE;
-					else if (direction.equalsIgnoreCase("ENE")) dir = FriendlyNav.ENE;
-					else if (direction.equalsIgnoreCase("E"))   dir = FriendlyNav.E;
-					else if (direction.equalsIgnoreCase("ESE")) dir = FriendlyNav.ESE;
-					else if (direction.equalsIgnoreCase("SE"))  dir = FriendlyNav.SE;
-					else if (direction.equalsIgnoreCase("SSE")) dir = FriendlyNav.SSE;
-					else if (direction.equalsIgnoreCase("S"))   dir = FriendlyNav.S;
-					else if (direction.equalsIgnoreCase("SSW")) dir = FriendlyNav.SSW;
-					else if (direction.equalsIgnoreCase("SW"))  dir = FriendlyNav.SW;
-					else if (direction.equalsIgnoreCase("WSW")) dir = FriendlyNav.WSW;
-					else if (direction.equalsIgnoreCase("W"))   dir = FriendlyNav.W;
-					else if (direction.equalsIgnoreCase("WNW")) dir = FriendlyNav.WNW;
-					else if (direction.equalsIgnoreCase("NW"))  dir = FriendlyNav.NW;
-					else if (direction.equalsIgnoreCase("NNW")) dir = FriendlyNav.NNW;
-					else    								    dir = FriendlyNav.N;
+					     if (direction.equalsIgnoreCase("downstairs")) dir = FriendlyNav.DOWNSTAIRS;
+					else if (direction.equalsIgnoreCase("upstairs"))   dir = FriendlyNav.UPSTAIRS;
+					else if (direction.equalsIgnoreCase("NNE"))        dir = FriendlyNav.NNE;
+					else if (direction.equalsIgnoreCase("NE"))         dir = FriendlyNav.NE;
+					else if (direction.equalsIgnoreCase("ENE"))        dir = FriendlyNav.ENE;
+					else if (direction.equalsIgnoreCase("E"))          dir = FriendlyNav.E;
+					else if (direction.equalsIgnoreCase("ESE"))        dir = FriendlyNav.ESE;
+					else if (direction.equalsIgnoreCase("SE"))         dir = FriendlyNav.SE;
+					else if (direction.equalsIgnoreCase("SSE"))        dir = FriendlyNav.SSE;
+					else if (direction.equalsIgnoreCase("S"))          dir = FriendlyNav.S;
+					else if (direction.equalsIgnoreCase("SSW"))        dir = FriendlyNav.SSW;
+					else if (direction.equalsIgnoreCase("SW"))         dir = FriendlyNav.SW;
+					else if (direction.equalsIgnoreCase("WSW"))        dir = FriendlyNav.WSW;
+					else if (direction.equalsIgnoreCase("W"))          dir = FriendlyNav.W;
+					else if (direction.equalsIgnoreCase("WNW"))        dir = FriendlyNav.WNW;
+					else if (direction.equalsIgnoreCase("NW"))         dir = FriendlyNav.NW;
+					else if (direction.equalsIgnoreCase("NNW"))        dir = FriendlyNav.NNW;
+					else    								           dir = FriendlyNav.N;
 					
 					Edge e = new Edge(fromV, toV, weight, dir);
 					fromV.addEdge(e);
-					
-					Log.e("APP", "Added edge.");
 					
 				} catch (DataNotFoundException e) {
 					e.printStackTrace();

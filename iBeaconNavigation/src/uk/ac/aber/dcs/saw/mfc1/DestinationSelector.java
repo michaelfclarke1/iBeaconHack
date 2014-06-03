@@ -20,10 +20,8 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.app.Activity;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ImageView;
 import android.widget.Spinner;
@@ -58,14 +56,15 @@ public class DestinationSelector extends Activity
 		sensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
 	    accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 	    magnetometer = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
-	    
-		
-	    
+
 		g = new Graph(getBaseContext(), "navDB");
 		adapter = new DestinationListAdapter(getBaseContext(), g.locations());
 		
-		sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_UI);
-		sensorManager.registerListener(this, magnetometer, SensorManager.SENSOR_DELAY_UI);
+		sensorManager.registerListener(this, accelerometer, 
+											SensorManager.SENSOR_DELAY_UI);
+		
+		sensorManager.registerListener(this, magnetometer, 
+											SensorManager.SENSOR_DELAY_UI);
 		
 		compassView = (ImageView) findViewById(R.id.imageView1);
 		
@@ -75,24 +74,20 @@ public class DestinationSelector extends Activity
 		goToSpinner.setAdapter(adapter);
 		currentLocationTextArea.setText("Unknown");
 		
-		 
-		
 		directions = (TextView) findViewById(R.id.directions);
 		
 		goToSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 
 			@Override
-			public void onItemSelected(AdapterView<?> arg0, View arg1,
-					int arg2, long arg3) {
-				// TODO Auto-generated method stub
+			public void onItemSelected(AdapterView<?> arg0, 
+									View arg1, int arg2, long arg3) {
+				
 				adapter.setSelected(arg2);
+				
 			}
 
 			@Override
-			public void onNothingSelected(AdapterView<?> arg0) {
-				// TODO Auto-generated method stub
-				
-			}
+			public void onNothingSelected(AdapterView<?> arg0) { }
 			
 		});
 		
@@ -106,20 +101,30 @@ public class DestinationSelector extends Activity
 	 * to unbind.
 	 */
 	public void onDestroy() {
+		
 		super.onDestroy();
 		iBeaconManager.unBind(this);
 		sensorManager.unregisterListener(this);
+		
 	}
 
 	protected void onResume() {
+		
 		super.onResume();
-		sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_UI);
-		sensorManager.registerListener(this, magnetometer, SensorManager.SENSOR_DELAY_UI);
+		
+		sensorManager.registerListener(this, accelerometer, 
+												SensorManager.SENSOR_DELAY_UI);
+		
+		sensorManager.registerListener(this, magnetometer, 
+												SensorManager.SENSOR_DELAY_UI);
+		
 	}
 		 
 	protected void onPause() {
+		
 		super.onPause();
 		sensorManager.unregisterListener(this);
+		
 	}
 	
 	@Override
@@ -162,7 +167,9 @@ public class DestinationSelector extends Activity
 				}
 				
 				runOnUiThread(
+						
 						new Runnable() {
+							
 							public void run() {
 				
 								if (currentLocation == null)
@@ -175,29 +182,34 @@ public class DestinationSelector extends Activity
 										g.navigate(currentLocation, adapter.getCurrentSelected());
 								
 								if (steps != null) {
+									
 									if (steps.size() >= 2) {
+										
 										NavigationStep dire = steps.get(steps.size()-2);
-										if (dire.toString().equalsIgnoreCase("n")) headingShouldBe = 0;
-										if (dire.toString().equalsIgnoreCase("nne")) headingShouldBe = 23;
-										if (dire.toString().equalsIgnoreCase("ne")) headingShouldBe = 45;
-										if (dire.toString().equalsIgnoreCase("ene")) headingShouldBe = 68;
-										if (dire.toString().equalsIgnoreCase("e")) headingShouldBe = 90;
-										if (dire.toString().equalsIgnoreCase("ese")) headingShouldBe = 113;
-										if (dire.toString().equalsIgnoreCase("se")) headingShouldBe = 135;
-										if (dire.toString().equalsIgnoreCase("sse")) headingShouldBe = 158;
-										if (dire.toString().equalsIgnoreCase("s")) headingShouldBe = 180;
-										if (dire.toString().equalsIgnoreCase("ssw")) headingShouldBe = 203;
-										if (dire.toString().equalsIgnoreCase("sw")) headingShouldBe = 225;
-										if (dire.toString().equalsIgnoreCase("wsw")) headingShouldBe = 248;
-										if (dire.toString().equalsIgnoreCase("w")) headingShouldBe = 270;
-										if (dire.toString().equalsIgnoreCase("wnw")) headingShouldBe = 293;
-										if (dire.toString().equalsIgnoreCase("nw")) headingShouldBe = 315;
-										if (dire.toString().equalsIgnoreCase("nnw")) headingShouldBe = 338;
+										
+										     if (dire.toString().equalsIgnoreCase("n"))   headingShouldBe = 0;
+										else if (dire.toString().equalsIgnoreCase("nne")) headingShouldBe = 23;
+										else if (dire.toString().equalsIgnoreCase("ne"))  headingShouldBe = 45;
+										else if (dire.toString().equalsIgnoreCase("ene")) headingShouldBe = 68;
+										else if (dire.toString().equalsIgnoreCase("e"))   headingShouldBe = 90;
+										else if (dire.toString().equalsIgnoreCase("ese")) headingShouldBe = 113;
+										else if (dire.toString().equalsIgnoreCase("se"))  headingShouldBe = 135;
+										else if (dire.toString().equalsIgnoreCase("sse")) headingShouldBe = 158;
+										else if (dire.toString().equalsIgnoreCase("s"))   headingShouldBe = 180;
+										else if (dire.toString().equalsIgnoreCase("ssw")) headingShouldBe = 203;
+										else if (dire.toString().equalsIgnoreCase("sw"))  headingShouldBe = 225;
+										else if (dire.toString().equalsIgnoreCase("wsw")) headingShouldBe = 248;
+										else if (dire.toString().equalsIgnoreCase("w"))   headingShouldBe = 270;
+										else if (dire.toString().equalsIgnoreCase("wnw")) headingShouldBe = 293;
+										else if (dire.toString().equalsIgnoreCase("nw"))  headingShouldBe = 315;
+										else if (dire.toString().equalsIgnoreCase("nnw")) headingShouldBe = 338;
 												
-										String str = "At " + steps.get(steps.size()-1) + " head " + steps.get(steps.size()-2) + "."; 
+										String str = "At " + 
+												steps.get(steps.size()-1) + 
+													" head " + 
+														steps.get(steps.size()-2) + ".";
+										
 										directions.setText(str);
-										
-										
 										
 									}	
 								}
@@ -246,12 +258,14 @@ public class DestinationSelector extends Activity
 		
 		if (gravity != null && geomagnetic != null) {
 		      if(SensorManager.getRotationMatrix(rmx, imx, gravity, geomagnetic)) {
+		    	  
 		        SensorManager.getOrientation(rmx, this.orientationValues);
 		        this.orientationValues[0] *= (180 / Math.PI);
 		        this.orientationValues[0] += 180;
 		        this.orientationValues[0] %= 360;
 		        
-		        this.orientationValues[0] = (float)headingCorrection((int)this.orientationValues[0], this.headingShouldBe);
+		        this.orientationValues[0] = 
+		        		(float)headingCorrection((int)this.orientationValues[0], this.headingShouldBe);
 		        
 		        if (this.orientationValues[0] >= 337 && this.orientationValues[0] < 23)
 		        	compassView.setImageResource(R.drawable.n);
@@ -283,7 +297,8 @@ public class DestinationSelector extends Activity
 		        	compassView.setImageResource(R.drawable.nw);
 		        else if (this.orientationValues[0] >= 321 && this.orientationValues[0] < 344)
 		        	compassView.setImageResource(R.drawable.nnw);
-		        }
+		        
+			}
 		}
 		
 	}
