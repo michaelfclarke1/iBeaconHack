@@ -26,15 +26,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-                <service android:enabled="true"
+                        <service android:enabled="true"
         android:exported="true"
         android:isolatedProcess="false"
         android:label="iBeacon"
         android:name="com.radiusnetworks.ibeacon.service.IBeaconService" android:permission="android.permission.BLUETOOTH">
     </service>    
-            <service android:enabled="true" 
+    <service android:enabled="true" 
         android:name="com.radiusnetworks.ibeacon.IBeaconIntentProcessor" android:exported="false" android:permission="android.permission.BLUETOOTH">
-            <meta-data android:name="background" android:value="true" />
         <intent-filter 
            android:priority="1" >
             <action android:name="uk.ac.aber.astute.mfc1.ibeacon_demo.DID_RANGING" />

@@ -6,13 +6,15 @@ public class Edge {
 	private Vertex to;
 	private int weight;
 	private FriendlyNav navString;
+	private String instruction;
 	
-	public Edge(Vertex from, Vertex to, int weight, FriendlyNav navString) {
+	public Edge(Vertex from, Vertex to, int weight, FriendlyNav navString, String instruction) {
 		
 		this.from = from;
 		this.to = to;
 		this.weight = weight;
 		this.navString = navString;
+		this.instruction = instruction;
 		
 	}
 	
@@ -30,6 +32,10 @@ public class Edge {
 	
 	public FriendlyNav getFriendlyNav() {
 		return this.navString;
+	}
+	
+	public String getInstruction() {
+		return this.instruction;
 	}
 	
 }

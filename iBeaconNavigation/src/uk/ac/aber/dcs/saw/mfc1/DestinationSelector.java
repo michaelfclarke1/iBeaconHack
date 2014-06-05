@@ -23,7 +23,6 @@ import android.app.Activity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -36,7 +35,6 @@ public class DestinationSelector extends Activity
 	private Vertex currentLocation = null;
 	private TextView currentLocationTextArea;
 	private TextView directions;
-	private ImageView compassView;
 	
 	private int headingShouldBe = 0;
 
@@ -44,8 +42,16 @@ public class DestinationSelector extends Activity
 	Sensor accelerometer;
 	Sensor magnetometer;
 	private float orientationValues[] = new float[3];
+	private float filter[] = new float[15];
+	private int filter_id = 0;
 	float[] gravity = null;
 	float[] geomagnetic = null;
+	float filter_value = 0;
+	
+	private boolean downstairs = false;
+	private boolean upstairs = false;
+	
+	private Compass c;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +72,7 @@ public class DestinationSelector extends Activity
 		sensorManager.registerListener(this, magnetometer, 
 											SensorManager.SENSOR_DELAY_UI);
 		
-		compassView = (ImageView) findViewById(R.id.imageView1);
+		c = (Compass) findViewById(R.id.compass);
 		
 		Spinner goToSpinner = (Spinner) findViewById(R.id.locations);
 		currentLocationTextArea = (TextView) findViewById(R.id.currentLocation);
@@ -183,33 +189,36 @@ public class DestinationSelector extends Activity
 								
 								if (steps != null) {
 									
-									if (steps.size() >= 2) {
+									if (steps.size() >= 1) {
 										
-										NavigationStep dire = steps.get(steps.size()-2);
+										NavigationStep dire = steps.get(steps.size()-1);
 										
-										     if (dire.toString().equalsIgnoreCase("n"))   headingShouldBe = 0;
-										else if (dire.toString().equalsIgnoreCase("nne")) headingShouldBe = 23;
-										else if (dire.toString().equalsIgnoreCase("ne"))  headingShouldBe = 45;
-										else if (dire.toString().equalsIgnoreCase("ene")) headingShouldBe = 68;
-										else if (dire.toString().equalsIgnoreCase("e"))   headingShouldBe = 90;
-										else if (dire.toString().equalsIgnoreCase("ese")) headingShouldBe = 113;
-										else if (dire.toString().equalsIgnoreCase("se"))  headingShouldBe = 135;
-										else if (dire.toString().equalsIgnoreCase("sse")) headingShouldBe = 158;
-										else if (dire.toString().equalsIgnoreCase("s"))   headingShouldBe = 180;
-										else if (dire.toString().equalsIgnoreCase("ssw")) headingShouldBe = 203;
-										else if (dire.toString().equalsIgnoreCase("sw"))  headingShouldBe = 225;
-										else if (dire.toString().equalsIgnoreCase("wsw")) headingShouldBe = 248;
-										else if (dire.toString().equalsIgnoreCase("w"))   headingShouldBe = 270;
-										else if (dire.toString().equalsIgnoreCase("wnw")) headingShouldBe = 293;
-										else if (dire.toString().equalsIgnoreCase("nw"))  headingShouldBe = 315;
-										else if (dire.toString().equalsIgnoreCase("nnw")) headingShouldBe = 338;
+										upstairs = false;
+										downstairs = false;
+										
+										     if (dire.getDirection().equalsIgnoreCase("n"))   headingShouldBe = 0;
+										else if (dire.getDirection().equalsIgnoreCase("nne")) headingShouldBe = 23;
+										else if (dire.getDirection().equalsIgnoreCase("ne"))  headingShouldBe = 45;
+										else if (dire.getDirection().equalsIgnoreCase("ene")) headingShouldBe = 68;
+										else if (dire.getDirection().equalsIgnoreCase("e"))   headingShouldBe = 90;
+										else if (dire.getDirection().equalsIgnoreCase("ese")) headingShouldBe = 113;
+										else if (dire.getDirection().equalsIgnoreCase("se"))  headingShouldBe = 135;
+										else if (dire.getDirection().equalsIgnoreCase("sse")) headingShouldBe = 158;
+										else if (dire.getDirection().equalsIgnoreCase("s"))   headingShouldBe = 180;
+										else if (dire.getDirection().equalsIgnoreCase("ssw")) headingShouldBe = 203;
+										else if (dire.getDirection().equalsIgnoreCase("sw"))  headingShouldBe = 225;
+										else if (dire.getDirection().equalsIgnoreCase("wsw")) headingShouldBe = 248;
+										else if (dire.getDirection().equalsIgnoreCase("w"))   headingShouldBe = 270;
+										else if (dire.getDirection().equalsIgnoreCase("wnw")) headingShouldBe = 293;
+										else if (dire.getDirection().equalsIgnoreCase("nw"))  headingShouldBe = 315;
+										else if (dire.getDirection().equalsIgnoreCase("nnw")) headingShouldBe = 338;
+										else if (dire.getDirection().equalsIgnoreCase("upstairs")) {
+											upstairs = true;
+										} else if (dire.getDirection().equalsIgnoreCase("downstairs")) {
+											downstairs = true;
+										}
 												
-										String str = "At " + 
-												steps.get(steps.size()-1) + 
-													" head " + 
-														steps.get(steps.size()-2) + ".";
-										
-										directions.setText(str);
+										directions.setText(steps.get(steps.size()-1).toString());
 										
 									}	
 								}
@@ -259,6 +268,12 @@ public class DestinationSelector extends Activity
 		if (gravity != null && geomagnetic != null) {
 		      if(SensorManager.getRotationMatrix(rmx, imx, gravity, geomagnetic)) {
 		    	  
+		    	if (this.filter_id >= this.filter.length)
+		    		this.filter_id = 0;
+		    	
+		    	this.filter[filter_id] = this.orientationValues[0];
+		    	this.filter_id++;
+		    	  
 		        SensorManager.getOrientation(rmx, this.orientationValues);
 		        this.orientationValues[0] *= (180 / Math.PI);
 		        this.orientationValues[0] += 180;
@@ -267,42 +282,21 @@ public class DestinationSelector extends Activity
 		        this.orientationValues[0] = 
 		        		(float)headingCorrection((int)this.orientationValues[0], this.headingShouldBe);
 		        
-		        if (this.orientationValues[0] >= 337 && this.orientationValues[0] < 23)
-		        	compassView.setImageResource(R.drawable.n);
-		        else if (this.orientationValues[0] >=23 && this.orientationValues[0] < 45)
-		        	compassView.setImageResource(R.drawable.nne);
-		        else if (this.orientationValues[0] >=45 && this.orientationValues[0] < 68)
-		        	compassView.setImageResource(R.drawable.ene);
-		        else if (this.orientationValues[0] >= 68 && this.orientationValues[0] < 90)
-		        	compassView.setImageResource(R.drawable.e);
-		        else if (this.orientationValues[0] >= 90 && this.orientationValues[0] < 113)
-		        	compassView.setImageResource(R.drawable.ese);
-		        else if (this.orientationValues[0] >= 113 && this.orientationValues[0] < 137)
-		        	compassView.setImageResource(R.drawable.se);
-		        else if (this.orientationValues[0] >=137 && this.orientationValues[0] < 160)
-		        	compassView.setImageResource(R.drawable.sse);
-		        else if (this.orientationValues[0] >=160 && this.orientationValues[0] <183)
-		        	compassView.setImageResource(R.drawable.s);
-		        else if (this.orientationValues[0] >= 183 && this.orientationValues[0] < 206)
-		        	compassView.setImageResource(R.drawable.ssw);
-		        else if (this.orientationValues[0] >= 206 && this.orientationValues[0] < 229)
-		        	compassView.setImageResource(R.drawable.sw);
-		        else if (this.orientationValues[0] >= 229 && this.orientationValues[0] < 252)
-		        	compassView.setImageResource(R.drawable.wsw);
-		        else if (this.orientationValues[0] >= 252 && this.orientationValues[0] < 275)
-		        	compassView.setImageResource(R.drawable.w);
-		        else if (this.orientationValues[0] >= 275 && this.orientationValues[0] < 298)
-		        	compassView.setImageResource(R.drawable.wnw);
-		        else if (this.orientationValues[0] >=298 && this.orientationValues[0] < 321)
-		        	compassView.setImageResource(R.drawable.nw);
-		        else if (this.orientationValues[0] >= 321 && this.orientationValues[0] < 344)
-		        	compassView.setImageResource(R.drawable.nnw);
+		        this.orientationValues[0] /= 180;
+		        this.orientationValues[0] *= Math.PI;
+		        
+		        filter_value = 0;
+		        for (int i = 0; i < filter.length; i++)
+		        	filter_value += filter[i];
+
+	        	c.setHeading((this.orientationValues[0] + this.filter_value) / (filter.length + 1));
+		        c.setUpstairsDownstairs(upstairs, downstairs);
 		        
 			}
 		}
 		
 	}
-
+		
 	@Override
 	public void onAccuracyChanged(Sensor sensor, int accuracy) { }
 	

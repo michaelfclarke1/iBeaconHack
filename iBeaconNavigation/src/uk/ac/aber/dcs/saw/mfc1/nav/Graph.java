@@ -77,6 +77,9 @@ public class Graph {
 					String to = sdh.getStringWithQuery("edge", "to_id", "id=?", id);
 					Integer weight = sdh.getIntegerWithQuery("edge", "weight", "id=?", id);
 					String direction = sdh.getStringWithQuery("edge", "direction", "id=?", id);
+					String instruction = sdh.getStringWithQuery("edge", "instructions", "id=?", id);
+					
+					Log.e("Instructions:", instruction);
 					
 					Vertex fromV = useful.get(from);
 					Vertex toV = useful.get(to);
@@ -102,7 +105,7 @@ public class Graph {
 					else if (direction.equalsIgnoreCase("NNW"))        dir = FriendlyNav.NNW;
 					else    								           dir = FriendlyNav.N;
 					
-					Edge e = new Edge(fromV, toV, weight, dir);
+					Edge e = new Edge(fromV, toV, weight, dir, instruction);
 					fromV.addEdge(e);
 					
 				} catch (DataNotFoundException e) {
@@ -115,94 +118,7 @@ public class Graph {
 		
 		/* No longer useful, was only worth keeping whilst building the graph. */
 		useful = null;
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		/* Build a fake graph for now. We should really load the graph from 
-		 * the database for the final app.
-		 */
-		/*
-		Vertex reception = new Vertex("e2c56db5-dffb-48d2-b060-d0f5a71096e0", 10, 1, "Reception");
-		Vertex coffeeRoom = new Vertex("e2c56db5-dffb-48d2-b060-d0f5a71096e0", 10, 2, "Coffee Room");
-		Vertex reyersOffice = new Vertex("e2c56db5-dffb-48d2-b060-d0f5a71096e0", 10, 3, "Reyer's Office");
-		Vertex delph = new Vertex("e2c56db5-dffb-48d2-b060-d0f5a71096e0", 10, 4, "Delph Computer Room");
-		Vertex tomsOffice = new Vertex("e2c56db5-dffb-48d2-b060-d0f5a71096e0", 10, 5, "Tom's Office");
-		
-		Edge receptionToCoffeeRoom = new Edge(reception, coffeeRoom, 1, FriendlyNav.SW);
-		Edge coffeeRoomToReception = new Edge(coffeeRoom, reception, 1, FriendlyNav.N);
-		
-		Edge receptionToDelph = new Edge(reception, delph, 1, FriendlyNav.UPSTAIRS);
-		Edge delphToReception = new Edge(delph, reception, 1, FriendlyNav.DOWNSTAIRS);
-		
-		Edge coffeeRoomToReyersOffice = new Edge(coffeeRoom, reyersOffice, 1, FriendlyNav.SW);
-		Edge reyersOfficeToCoffeeRoom = new Edge(reyersOffice, coffeeRoom, 1, FriendlyNav.N);
-		
-		Edge reyersOfficeToTomsOffice = new Edge(reyersOffice, tomsOffice, 1, FriendlyNav.UPSTAIRS);
-		Edge tomsOfficeToReyersOffice = new Edge(tomsOffice, reyersOffice, 1, FriendlyNav.DOWNSTAIRS);
-		
-		reception.addEdge(receptionToDelph);
-		reception.addEdge(receptionToCoffeeRoom);
-		
-		coffeeRoom.addEdge(coffeeRoomToReyersOffice);
-		coffeeRoom.addEdge(coffeeRoomToReception);
-		
-		delph.addEdge(delphToReception);
-		
-		reyersOffice.addEdge(reyersOfficeToTomsOffice);
-		reyersOffice.addEdge(reyersOfficeToCoffeeRoom);
-		
-		tomsOffice.addEdge(tomsOfficeToReyersOffice);
-		
-		graph.put(reception.getHash(), reception);
-		graph.put(coffeeRoom.getHash(), coffeeRoom);
-		graph.put(reyersOffice.getHash(), reyersOffice);
-		graph.put(delph.getHash(), delph);
-		graph.put(tomsOffice.getHash(), tomsOffice);
-		
-		allVertex.add(reception);
-		allVertex.add(coffeeRoom);
-		allVertex.add(reyersOffice);
-		allVertex.add(delph);
-		allVertex.add(tomsOffice);
-		
-		ArrayList<NavigationStep> test = navigate(reyersOffice, delph);
-
-		System.out.printf("Steps: %d\n", test.size());
-		for (int i = 0; i < test.size(); i++) {
-			System.out.printf("Step %d: %s\n", i, test.get(i).toString());
-		}
-
-		test = navigate(tomsOffice, delph);
-
-		System.out.printf("Steps: %d\n", test.size());
-		for (int i = 0; i < test.size(); i++) {
-			System.out.printf("Step %d: %s\n", i, test.get(i).toString());
-		}
-
-		test = navigate(coffeeRoom, tomsOffice);
-
-		System.out.printf("Steps: %d\n", test.size());
-		for (int i = 0; i < test.size(); i++) {
-			System.out.printf("Step %d: %s\n", i, test.get(i).toString());
-		}
-		*/
-		
-		
-		
-		
-		
-		
-		
-		
-		
+			
 	}
 	
 	public ArrayList<Vertex> locations() {
@@ -264,7 +180,7 @@ public class Graph {
 				if (current.getPrevious().getEdgesOut().get(i).getTo() == current)
 					steps.add(new NavigationStep(current.getPrevious().getEdgesOut().get(i)));
 			}
-			steps.add(new NavigationStep(current.getPrevious()));
+			//steps.add(new NavigationStep(current.getPrevious()));
 			current = current.getPrevious();
 		}
 
